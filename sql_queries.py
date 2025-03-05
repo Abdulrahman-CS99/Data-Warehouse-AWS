@@ -35,7 +35,7 @@ staging_events_table_create = ("""
         sessionId INTEGER,
         song VARCHAR,
         status INTEGER,
-        ts TIMESTAMP,
+        ts VARCHAR,
         userAgent VARCHAR,
         userId INTEGER
     );
@@ -115,15 +115,15 @@ time_table_create = ("""
 # STAGING TABLES
 
 staging_events_copy = ("""
-    COPY staging_events FROM '{}'
-    IAM_ROLE '{}'
-    FORMAT AS JSON '{}'
+    COPY staging_events FROM {}
+    IAM_ROLE {}
+    FORMAT AS JSON {}
     REGION 'us-west-2';
 """).format(config['S3']['LOG_DATA'], config['IAM_ROLE']['ARN'], config['S3']['LOG_JSONPATH'])
 
 staging_songs_copy = ("""
-    COPY staging_songs FROM '{}'
-    IAM_ROLE '{}'
+    COPY staging_songs FROM {}
+    IAM_ROLE {}
     FORMAT AS JSON 'auto'
     REGION 'us-west-2';
 """).format(config['S3']['SONG_DATA'], config['IAM_ROLE']['ARN'])
@@ -160,16 +160,15 @@ artist_table_insert = ("""
 
 time_table_insert = ("""
     INSERT INTO time (start_time, hour, day, week, month, year, weekday)
-    SELECT DISTINCT TIMESTAMP 'epoch' + (ts / 1000) * INTERVAL '1 second',
-           EXTRACT(HOUR FROM TIMESTAMP 'epoch' + (ts / 1000) * INTERVAL '1 second'),
-           EXTRACT(DAY FROM TIMESTAMP 'epoch' + (ts / 1000) * INTERVAL '1 second'),
-           EXTRACT(WEEK FROM TIMESTAMP 'epoch' + (ts / 1000) * INTERVAL '1 second'),
-           EXTRACT(MONTH FROM TIMESTAMP 'epoch' + (ts / 1000) * INTERVAL '1 second'),
-           EXTRACT(YEAR FROM TIMESTAMP 'epoch' + (ts / 1000) * INTERVAL '1 second'),
-           EXTRACT(DOW FROM TIMESTAMP 'epoch' + (ts / 1000) * INTERVAL '1 second')
+    SELECT DISTINCT TIMESTAMP 'epoch' + ts::BIGINT / 1000 * INTERVAL '1 second',
+           EXTRACT(HOUR FROM TIMESTAMP 'epoch' + ts::BIGINT / 1000 * INTERVAL '1 second'),
+           EXTRACT(DAY FROM TIMESTAMP 'epoch' + ts::BIGINT / 1000 * INTERVAL '1 second'),
+           EXTRACT(WEEK FROM TIMESTAMP 'epoch' + ts::BIGINT / 1000 * INTERVAL '1 second'),
+           EXTRACT(MONTH FROM TIMESTAMP 'epoch' + ts::BIGINT / 1000 * INTERVAL '1 second'),
+           EXTRACT(YEAR FROM TIMESTAMP 'epoch' + ts::BIGINT / 1000 * INTERVAL '1 second'),
+           EXTRACT(DOW FROM TIMESTAMP 'epoch' + ts::BIGINT / 1000 * INTERVAL '1 second')
     FROM staging_events;
 """)
-
 
 # QUERY LISTS
 
