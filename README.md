@@ -4,10 +4,11 @@
 This project builds an ETL pipeline to extract, transform, and load (ETL) data from AWS S3 into Amazon Redshift for Sparkify, a music streaming startup. The pipeline processes JSON log and song metadata to create an optimized star schema database for analytics.
 
 ## Purpose of the Database & Analytical Goals
-Sparkify's user base and song catalog have grown, and they need a **scalable data warehouse** for advanced analytics. The goal of this database is to:
+Sparkify data have grown and they need a scalable data warehouse for their advanced analytics team. The goal of this database is to:
+
 - **Track user song plays**: Identify trends in listening behavior.
 - **Analyze user engagement**: Determine which users are most active.
-- **Understand song popularity**: Find the most played songs and artists.
+- **Understand artist popularity**: Find the most asrtist that have popular songs.
 - **Improve business strategy**: Help Sparkify optimize their platform based on user activity insights.
 
 ## Dataset
@@ -15,7 +16,7 @@ Sparkify's user base and song catalog have grown, and they need a **scalable dat
 - **Log Dataset**: Contains user activity logs for music playback.
 
 ## Database Schema (Star Schema)
-The database follows a **Star Schema** design, which is ideal for analytical queries due to its **denormalized structure**. This improves **query performance** by reducing the need for complex joins.
+The database follows a **Star Schema** design which is great for analytical queries due to its denormalized structure. This improves query performance by reducing the need for complex joins.
 
 ### Fact Table:
 - **`songplays`**: Stores records of song plays (events with `page='NextSong'`).
@@ -36,8 +37,8 @@ The ETL pipeline extracts raw JSON data from S3, transforms it, and loads it int
 
 ### Why Use Staging Tables?
 - Staging tables **store raw data before transformation**.
-- This approach **ensures data integrity** before inserting into final tables.
-- It allows **bulk loading from S3 to Redshift**, which is faster than inserting row-by-row.
+- This approach ensures data integrity before inserting into final tables.
+- It allows bulk loading from S3 to Redshift which is faster than inserting row-by-row.
 
 ## Project Files
 - **`sql_queries.py`**: Contains SQL queries to create, drop, and insert data into tables.
@@ -45,12 +46,4 @@ The ETL pipeline extracts raw JSON data from S3, transforms it, and loads it int
 - **`etl.py`**: Extracts data from S3, loads it into staging tables, and inserts it into analytical tables.
 - **`dwh.cfg`**: Configuration file containing AWS credentials, S3 paths, and Redshift cluster details.
 
-## Example Queries
-- **Most played songs:**
-  ```sql
-  SELECT s.title, COUNT(*) AS play_count 
-  FROM songplays sp 
-  JOIN songs s ON sp.song_id = s.song_id 
-  GROUP BY s.title 
-  ORDER BY play_count DESC 
-  LIMIT 10;
+
