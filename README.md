@@ -50,7 +50,7 @@ The ETL pipeline extracts raw JSON data from S3, transforms it, and loads it int
 ## How ro run the project?
 1. **Create Tables**: Run `python create_tables.py` to set up the schema.
 2. **Load Staging Tables**:  RUN `etl.py` to  extracts data from S3 to staging tables in Redshift.
-3. **Check data in redshift**:  RUN 
+3. **Check data in redshift**:  RUN the follwing queries: 
 ```sql
 SELECT COUNT(*) FROM songplays;
 SELECT COUNT(*) FROM users;
